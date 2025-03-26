@@ -276,14 +276,14 @@ def run_simulation(
             jitter(1.30), jitter(1.25), jitter(1.20)])
 
     elif jitter_type == "None":
-        def jitter(_, __=None, ___=None):
-            return np.zeros(n_each)
+        def jitter(value, *_):
+            return np.full(n_each, value)
 
-        area_anchor = np.concatenate([jitter(None), jitter(None), jitter(None)])
-        h_anchor = np.concatenate([jitter(None), jitter(None), jitter(None)])
-        phi_anchor = np.concatenate([jitter(None), jitter(None), jitter(None)])
-        sw_anchor = np.concatenate([jitter(None), jitter(None), jitter(None)])
-        bo_anchor = np.concatenate([jitter(None), jitter(None), jitter(None)])
+        area_anchor = np.concatenate([jitter(a_mode)] * 3)
+        h_anchor    = np.concatenate([jitter(h_mode)] * 3)
+        phi_anchor  = np.concatenate([jitter(phi_mode)] * 3)
+        sw_anchor   = np.concatenate([jitter(sw_mode)] * 3)
+        bo_anchor   = np.concatenate([jitter(bo_mode)] * 3)
 
     else:
         raise ValueError(f"Unsupported jitter type: {jitter_type}")
