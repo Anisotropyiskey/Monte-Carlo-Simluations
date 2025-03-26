@@ -71,7 +71,7 @@ st.title("OOIP Monte Carlo Simulator (Anchored)")
 
 st.sidebar.header("Simulation Controls")
 n_sim = st.sidebar.slider("Number of Simulations", 100, 150000, 1000, step=100)
-base_weight = st.sidebar.slider("Base Distribution Weight", 0.01, 0.99, 0.7)
+base_weight = st.sidebar.slider("Base Distribution Weight", 0.0000001, 0.999999, 0.7)
 
 # ----- Base Distribution Parameters -----
 st.sidebar.markdown("### 📊 Base Distribution Parameters")
@@ -103,7 +103,7 @@ with st.sidebar.expander("🛢️ Bo (RB/STB)"):
 
 jitter_type = st.sidebar.selectbox(
     "Anchor Jitter Type",
-    ["Uniform", "Triangular", "Normal", "Fixed", "None"]
+    ["Uniform", "Triangular", "Normal", "Fixed"]
 )
 
 st.sidebar.markdown("### Anchor Jitter Controls")
@@ -154,9 +154,6 @@ with st.sidebar.expander("🎚️ Jitter Settings"):
             bo_tri_low = st.slider("Bo Low", 1.0, 2.0, 1.20, step=0.01)
             bo_tri_mode = st.slider("Bo Mode", 1.0, 2.0, 1.25, step=0.01)
             bo_tri_high = st.slider("Bo High", 1.0, 2.0, 1.30, step=0.01)
-
-    elif jitter_type == "None":
-        st.info("Anchor points are disabled (zero values used).")
 
 
 # (Optional: add controls for Triangular if you want to override default low/mode/high too)
@@ -274,16 +271,6 @@ def run_simulation(
             jitter(0.45), jitter(0.30), jitter(0.15)])
         bo_anchor = np.concatenate([
             jitter(1.30), jitter(1.25), jitter(1.20)])
-
-    elif jitter_type == "None":
-        def jitter(value, *_):
-            return np.full(n_each, value)
-
-        area_anchor = np.concatenate([jitter(a_mode)] * 3)
-        h_anchor    = np.concatenate([jitter(h_mode)] * 3)
-        phi_anchor  = np.concatenate([jitter(phi_mode)] * 3)
-        sw_anchor   = np.concatenate([jitter(sw_mode)] * 3)
-        bo_anchor   = np.concatenate([jitter(bo_mode)] * 3)
 
     else:
         raise ValueError(f"Unsupported jitter type: {jitter_type}")
