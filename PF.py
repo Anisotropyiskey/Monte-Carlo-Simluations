@@ -34,9 +34,9 @@ rf_max = st.sidebar.number_input("Recovery Factor Max (%)", value=35)
 # Initial Rate input
 st.sidebar.markdown("---")
 st.sidebar.subheader("🚀 Initial Rate (stb/day)")
-rate_min = st.sidebar.number_input("Rate Min", value=3000)
-rate_mode = st.sidebar.number_input("Rate Mode", value=8000)
-rate_max = st.sidebar.number_input("Rate Max", value=15000)
+rate_min = st.sidebar.number_input("Rate Min", value=5000, min_value=0,max_value=100000,step=100)
+rate_mode = st.sidebar.number_input("Rate Mode", value=10000, min_value=0,max_value=100000,step=100)
+rate_max = st.sidebar.number_input("Rate Max", value=15000, min_value=0,max_value=100000,step=100)
 
 # Decline inputs
 st.sidebar.markdown("---")
