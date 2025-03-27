@@ -6,17 +6,14 @@ import pandas as pd
 
 st.set_page_config(layout="wide")
 
-run_forecast = st.sidebar.button("▶️ Run Forecast Simulation")
-
-
-
-
 # ------------------------------------------
 # Sidebar Inputs – OOIP, RF, Rate, Decline
 # ------------------------------------------
 st.sidebar.title("📊 Monte Carlo Rate & EUR Forecast")
 
 n_sims = st.sidebar.slider("Number of Simulations", 100, 50000, 10000, step=100)
+
+run_forecast = st.sidebar.button("▶️ Run Forecast Simulation")
 
 # OOIP and Recovery Factor inputs
 st.sidebar.markdown("---")
