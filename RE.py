@@ -12,7 +12,7 @@ st.set_page_config(layout="wide")
 # 1. Sidebar Parameter Input (Consolidated)
 # ----------------------------
 
-st.sidebar.title("🛠️ FLow Rate Input Parameters")
+st.sidebar.title("🛠️ Flow Rate Input Parameters")
 
 
 run_sim = st.sidebar.button("▶️ Run Simulation")
