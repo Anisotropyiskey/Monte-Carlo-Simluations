@@ -24,9 +24,9 @@ if st.sidebar.button("▶️ Run Forecast Simulation"):
 # OOIP and Recovery Factor inputs
 st.sidebar.markdown("---")
 st.sidebar.subheader("🪨 OOIP & Recovery Factor")
-ooip_min = st.sidebar.number_input("OOIP Min (MMSTB)", value=100)
-ooip_mode = st.sidebar.number_input("OOIP Mode (MMSTB)", value=250)
-ooip_max = st.sidebar.number_input("OOIP Max (MMSTB)", value=500)
+ooip_min = st.sidebar.number_input("OOIP Min (MMSTB)", value=100, min_value=0,max_value=10000,step=10)  
+ooip_mode = st.sidebar.number_input("OOIP Mode (MMSTB)", value=300, min_value=0,max_value=10000,step=10)
+ooip_max = st.sidebar.number_input("OOIP Max (MMSTB)",  value=400, min_value=0,max_value=10000,step=10)
 rf_min = st.sidebar.number_input("Recovery Factor Min (%)", value=25)
 rf_mode = st.sidebar.number_input("Recovery Factor Mode (%)", value=30)
 rf_max = st.sidebar.number_input("Recovery Factor Max (%)", value=35)
