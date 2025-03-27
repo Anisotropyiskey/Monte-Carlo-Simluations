@@ -212,7 +212,7 @@ def safe_kde_plot(q_results, p10, p50, p90, title="PDF of Flow Rate"):
         y_val = kde.evaluate([val])[0]
         ax.vlines(val, 0, y_val, color=color, linestyle='--')
         ax.scatter(val, y_val, color=color, s=40, zorder=5)
-        ax.text(val + 0.02 * max(q_results), y_val + 0.01 * max(pdf),
+        ax.text(val + 0.02 * max(q_results), y_val - 0.01 * max(pdf),
                 f"{label}\n({val:.1f})", color=color, fontsize=8, fontweight='bold')
 
     ax.set_xlabel("Flow Rate (stb/day)")
