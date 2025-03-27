@@ -47,8 +47,8 @@ decline_model = st.sidebar.selectbox(
     index=2
 )
 forecast_months = st.sidebar.slider("Forecast Duration (months)", 12, 360, 120, step=12)
-b_factor = st.sidebar.slider("b-factor (Hyperbolic Exponent)", 0.0, 1.5, 0.5, 0.05)
-Di = st.sidebar.slider("Initial Decline Rate (Di)", 0.01, 0.8, 0.3, 0.01)
+b_factor = st.sidebar.slider("b-factor (Hyperbolic Exponent)", 0.0, 1.5, 1.2, 0.05)
+Di = st.sidebar.slider("Initial Decline Rate (Di)", 0.01, 0.8, 0.1, 0.01)
 plateau_duration = st.sidebar.slider("Plateau Duration (months)", 0, 60, 24, step=6)
 
 # ------------------------------------------
