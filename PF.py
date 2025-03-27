@@ -34,9 +34,9 @@ rf_max = st.sidebar.number_input("Recovery Factor Max (%)", value=35)
 # Initial Rate input
 st.sidebar.markdown("---")
 st.sidebar.subheader("🚀 Initial Rate (stb/day)")
-rate_min = st.sidebar.number_input("Rate Min", value=5000, min_value=0,max_value=100000,step=100)
-rate_mode = st.sidebar.number_input("Rate Mode", value=10000, min_value=0,max_value=100000,step=100)
-rate_max = st.sidebar.number_input("Rate Max", value=15000, min_value=0,max_value=100000,step=100)
+rate_min = st.sidebar.number_input("Rate Min", value=3000)
+rate_mode = st.sidebar.number_input("Rate Mode", value=8000)
+rate_max = st.sidebar.number_input("Rate Max", value=15000)
 
 # Decline inputs
 st.sidebar.markdown("---")
@@ -62,6 +62,8 @@ if st.session_state.run_forecast_triggered:
     rf_samples = np.random.triangular(rf_min, rf_mode, rf_max, size=n_sims) / 100
     eur_max_samples = ooip_samples * rf_samples
     q_results = np.random.triangular(rate_min, rate_mode, rate_max, size=n_sims)
+    trr = eur_max_samples  # Already equals OOIP × RF
+
 
     months = np.arange(0, forecast_months + 1)
     q_forecasts = []
@@ -97,6 +99,9 @@ if st.session_state.run_forecast_triggered:
     q_mean = np.mean(q_results)
     p90_eur, p50_eur, p10_eur = np.percentile(eur, [10, 50, 90])
     eur_mean = np.mean(eur)
+    avg_trr = np.mean(trr)
+    p90_trr, p50_trr, p10_trr = np.percentile(trr, [10, 50, 90])
+
 
     # Plot EUR PDF
     fig_pdf, ax_pdf = plt.subplots(figsize=(6, 4), dpi=100)
@@ -144,6 +149,13 @@ if st.session_state.run_forecast_triggered:
     axf.legend()
     fig_forecast.tight_layout()
 
+    st.subheader("🧮 Technically Recoverable Reserves (OOIP × RF)", divider=True)
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("P90", f"{p90_trr:.2f} MMBO")
+    col2.metric("P50", f"{p50_trr:.2f} MMBO")
+    col3.metric("P10", f"{p10_trr:.2f} MMBO")
+    col4.metric("Mean", f"{avg_trr:.2f} MMBO")
+
     # Summary – Initial Rate
     st.subheader("🚀 Initial Rate Distribution", divider=True)
     col1, col2, col3, col4 = st.columns(4)
@@ -159,6 +171,8 @@ if st.session_state.run_forecast_triggered:
     col2.metric("P50", f"{p50_eur:.2f} MMBO")
     col3.metric("P10", f"{p10_eur:.2f} MMBO")
     col4.metric("Mean", f"{eur_mean:.2f} MMBO")
+
+
 
     # Display Plots
     col1, col2, col3 = st.columns(3)
