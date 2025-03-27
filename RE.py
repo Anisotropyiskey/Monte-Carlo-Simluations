@@ -32,12 +32,12 @@ n_sims = st.sidebar.slider(
 # Define your parameter labels and default values
 parameter_defaults = {
     "Permeability k (md)": (250, 500, 750),               # min, mode, max
-    "Relative Permeability kro": (0.89, 0.9, .901),
+    "Relative Permeability kro": .09,
     "Thickness h (ft)": (80, 100, 120),
     "Viscosity μ (cp)": (4, 6, 8),
     "Formation Volume Factor Bo": (1.1, 1.2, 1.3),
     "Pressure Drawdown ΔP (psi)": (800,1000,1200),         
-    "Skin": (-2.0, 2, 4),                                 
+    "Skin": (-2, 2, 4),                                 
     "Shape Factor CA": 31.6,                              # Fixed
     "Drainage Area (acres)": (200, 300, 400),
     "Well Radius rw (ft)": .51, 
