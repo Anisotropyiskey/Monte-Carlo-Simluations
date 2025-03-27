@@ -31,40 +31,47 @@ n_sims = st.sidebar.slider(
 
 # Define your parameter labels and default values
 parameter_defaults = {
-    "Permeability k (md)": 500,
-    "Relative Permeability kro": 0.9,
-    "Thickness h (ft)": 100,
-    "Viscosity μ (cp)": 6,
-    "Formation Volume Factor Bo": 1.2,
-    "Pressure Drawdown ΔP (psi)": 1000,
-    "Skin": 2.0,
-    "Shape Factor CA": 31.6,
-    "Drainage Area (acres)": 300,
-    "Well Radius rw (ft)": 0.51,
+    "Permeability k (md)": (250, 500, 750),               # min, mode, max
+    "Relative Permeability kro": (0.89, 0.9, .901),
+    "Thickness h (ft)": (80, 100, 120),
+    "Viscosity μ (cp)": (4, 6, 8),
+    "Formation Volume Factor Bo": (1.1, 1.2, 1.3),
+    "Pressure Drawdown ΔP (psi)": 1000,                   # Fixed
+    "Skin": 2.0,                                          # Fixed
+    "Shape Factor CA": (25, 31, 35),
+    "Drainage Area (acres)": (200, 300, 400),
+    "Well Radius rw (ft)": (0.3, 0.51, 0.7)
 }
 
-def get_samples(label, default=1.0):
+
+def get_samples(label, default):
     with st.sidebar.expander(label):
+        # Detect if default is triangular by checking if it's a tuple
+        default_is_triangular = isinstance(default, tuple) and len(default) == 3
+
+        # Choose default index: 1 (Triangular) if tuple, else 0 (Fixed)
         dist_type = st.selectbox(
             "Input type",
             ["Fixed value", "Triangular distribution", "Uniform distribution"],
+            index=1 if default_is_triangular else 0,
             key=f"{label}_type"
         )
 
         if dist_type == "Fixed value":
-            val = st.number_input("Value", value=default, key=f"{label}_fixed")
+            val = st.number_input("Value", value=default if not default_is_triangular else default[1], key=f"{label}_fixed")
             return np.full(n_sims, val)
 
         elif dist_type == "Triangular distribution":
-            min_val = st.number_input("Min", value=default * 0.5, key=f"{label}_min")
-            mode_val = st.number_input("Mode", value=default, key=f"{label}_mode")
-            max_val = st.number_input("Max", value=default * 1.5, key=f"{label}_max")
+            min_val = st.number_input("Min", value=default[0] if default_is_triangular else default * 0.5, key=f"{label}_min")
+            mode_val = st.number_input("Mode", value=default[1] if default_is_triangular else default, key=f"{label}_mode")
+            max_val = st.number_input("Max", value=default[2] if default_is_triangular else default * 1.5, key=f"{label}_max")
             return np.random.triangular(min_val, mode_val, max_val, size=n_sims)
 
         elif dist_type == "Uniform distribution":
-            min_val = st.number_input("Min", value=default * 0.5, key=f"{label}_umin")
-            max_val = st.number_input("Max", value=default * 1.5, key=f"{label}_umax")
+            min_val = st.number_input("Min", value=default[0] if default_is_triangular else default * 0.5, key=f"{label}_umin")
+            max_val = st.number_input("Max", value=default[2] if default_is_triangular else default * 1.5, key=f"{label}_umax")
             return np.random.uniform(min_val, max_val, size=n_sims)
+
 
 # ----------------------------
 # Categorized Input Summary
@@ -118,21 +125,40 @@ def format_param_summary(label, default):
     dist_type = st.session_state.get(f"{label}_type", "Fixed value")
 
     if dist_type == "Fixed value":
-        val = st.session_state.get(f"{label}_fixed", default)
+        val = st.session_state.get(
+            f"{label}_fixed", 
+            default[1] if isinstance(default, tuple) else default
+        )
         return f"**{label}**\nFixed = `{val}`"
 
     elif dist_type == "Triangular distribution":
-        min_val = st.session_state.get(f"{label}_min", default * 0.5)
-        mode_val = st.session_state.get(f"{label}_mode", default)
-        max_val = st.session_state.get(f"{label}_max", default * 1.5)
+        min_val = st.session_state.get(
+            f"{label}_min", 
+            default[0] if isinstance(default, tuple) else default * 0.5
+        )
+        mode_val = st.session_state.get(
+            f"{label}_mode", 
+            default[1] if isinstance(default, tuple) else default
+        )
+        max_val = st.session_state.get(
+            f"{label}_max", 
+            default[2] if isinstance(default, tuple) else default * 1.5
+        )
         return f"**{label}**\nTriangular = `{min_val}` / `{mode_val}` / `{max_val}`"
 
     elif dist_type == "Uniform distribution":
-        min_val = st.session_state.get(f"{label}_umin", default * 0.5)
-        max_val = st.session_state.get(f"{label}_umax", default * 1.5)
+        min_val = st.session_state.get(
+            f"{label}_umin", 
+            default[0] if isinstance(default, tuple) else default * 0.5
+        )
+        max_val = st.session_state.get(
+            f"{label}_umax", 
+            default[2] if isinstance(default, tuple) else default * 1.5
+        )
         return f"**{label}**\nUniform = `{min_val}` – `{max_val}`"
 
     return f"**{label}**\n[Unknown Input Type]"
+
 
 # Create three columns
 col_res, col_fld, col_well = st.columns(3)
@@ -186,7 +212,7 @@ def safe_kde_plot(q_results, p10, p50, p90, title="PDF of Flow Rate"):
         y_val = kde.evaluate([val])[0]
         ax.vlines(val, 0, y_val, color=color, linestyle='--')
         ax.scatter(val, y_val, color=color, s=40, zorder=5)
-        ax.text(val + 0.02 * max(q_results), y_val - 0.01 * max(pdf),
+        ax.text(val + 0.02 * max(q_results), y_val + 0.01 * max(pdf),
                 f"{label}\n({val:.1f})", color=color, fontsize=8, fontweight='bold')
 
     ax.set_xlabel("Flow Rate (stb/day)")
