@@ -99,63 +99,60 @@ well_params = [
     "Well Radius rw (ft)"
 ]
 
-# Helper to format one parameter line
+
 def format_param_summary(label, default):
     dist_type = st.session_state.get(f"{label}_type", "Fixed value")
 
+    # Helper to style blocks
+    def styled_block(title, value, font="arial", size="16px", weight="normal", color="green", title_color="#dfe9e2"):
+        return f"""
+        <div style='margin-bottom: 15px;'>
+            <div style='font-family: {font};font-weight: bold; font-size: 16px; color: {title_color};'>{title}</div>
+            <div style='font-family: {font}; font-size: {size}; font-weight: {weight}; color: {color};'>{value}</div>
+        </div>
+        """
+
+
     if dist_type == "Fixed value":
-        val = st.session_state.get(
-            f"{label}_fixed", 
-            default[1] if isinstance(default, tuple) else default
-        )
-        return f"**{label}**\nFixed = `{val}`"
+        val = st.session_state.get(f"{label}_fixed", default[1] if isinstance(default, tuple) else default)
+        return styled_block(label, f"Fixed = {val}")
 
     elif dist_type == "Triangular distribution":
-        min_val = st.session_state.get(
-            f"{label}_min", 
-            default[0] if isinstance(default, tuple) else default * 0.5
-        )
-        mode_val = st.session_state.get(
-            f"{label}_mode", 
-            default[1] if isinstance(default, tuple) else default
-        )
-        max_val = st.session_state.get(
-            f"{label}_max", 
-            default[2] if isinstance(default, tuple) else default * 1.5
-        )
-        return f"**{label}**\nTriangular = `{min_val}` / `{mode_val}` / `{max_val}`"
+        min_val = st.session_state.get(f"{label}_min", default[0] if isinstance(default, tuple) else default * 0.5)
+        mode_val = st.session_state.get(f"{label}_mode", default[1] if isinstance(default, tuple) else default)
+        max_val = st.session_state.get(f"{label}_max", default[2] if isinstance(default, tuple) else default * 1.5)
+        return styled_block(label, f"Triangular = {min_val} / {mode_val} / {max_val}")
 
     elif dist_type == "Uniform distribution":
-        min_val = st.session_state.get(
-            f"{label}_umin", 
-            default[0] if isinstance(default, tuple) else default * 0.5
-        )
-        max_val = st.session_state.get(
-            f"{label}_umax", 
-            default[2] if isinstance(default, tuple) else default * 1.5
-        )
-        return f"**{label, }**\nUniform = `{min_val}` – `{max_val}`"
+        min_val = st.session_state.get(f"{label}_umin", default[0] if isinstance(default, tuple) else default * 0.5)
+        max_val = st.session_state.get(f"{label}_umax", default[2] if isinstance(default, tuple) else default * 1.5)
+        return styled_block(label, f"Uniform = {min_val} – {max_val}")
 
-    return f"**{label}**\n[Unknown Input Type]"
+    return styled_block(label, "[Unknown Input Type]")
+    return styled_block(label, f"Fixed = {val}", color="#5555FF", title_color="#dfe9e2")
+    return styled_block(label, f"Triangular = {min_val} / {mode_val} / {max_val}", color="orange")
+    return styled_block(label, f"Uniform = {min_val} – {max_val}", color="green")
+
 
 
 # Create three columns
 col_res, col_fld, col_well = st.columns(3)
 
 with col_res:
-    st.subheader("🪨 Reservoir")
+    st.markdown("<h3 style='text-align: left;'>🪨 Reservoir</h3>", unsafe_allow_html=True)
     for label in reservoir_params:
-        st.markdown(format_param_summary(label, parameter_defaults[label]))
+        st.markdown(format_param_summary(label, parameter_defaults[label]), unsafe_allow_html=True)
+
 
 with col_fld:
-    st.subheader("💧 Fluid")
+    st.markdown("<h3 style='text-align: left;'>💧 Fluid</h3>", unsafe_allow_html=True)
     for label in fluid_params:
-        st.markdown(format_param_summary(label, parameter_defaults[label]))
+        st.markdown(format_param_summary(label, parameter_defaults[label]), unsafe_allow_html=True)
 
 with col_well:
-    st.subheader("🛢️ Well")
+    st.markdown("<h3 style='text-align: left;'>🛢️ Well</h3>", unsafe_allow_html=True)
     for label in well_params:
-        st.markdown(format_param_summary(label, parameter_defaults[label]))
+        st.markdown(format_param_summary(label, parameter_defaults[label]), unsafe_allow_html=True)
 
 
 #st.markdown("\n".join(summary_lines))
