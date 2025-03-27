@@ -36,11 +36,11 @@ parameter_defaults = {
     "Thickness h (ft)": (80, 100, 120),
     "Viscosity μ (cp)": (4, 6, 8),
     "Formation Volume Factor Bo": (1.1, 1.2, 1.3),
-    "Pressure Drawdown ΔP (psi)": 1000,                   # Fixed
-    "Skin": 2.0,                                          # Fixed
-    "Shape Factor CA": (25, 31, 35),
+    "Pressure Drawdown ΔP (psi)": (800,1000,1200),         
+    "Skin": (-2.0, 2, 4),                                 
+    "Shape Factor CA": 31.6,                              # Fixed
     "Drainage Area (acres)": (200, 300, 400),
-    "Well Radius rw (ft)": (0.3, 0.51, 0.7)
+    "Well Radius rw (ft)": .51, 
 }
 
 
@@ -77,27 +77,6 @@ def get_samples(label, default):
 # Categorized Input Summary
 # ----------------------------
 
-
-
-# Define categories
-reservoir_params = [
-    "Permeability k (md)",
-    "Relative Permeability kro",
-    "Thickness h (ft)",
-    "Shape Factor CA",
-    "Drainage Area (acres)",
-    "Skin"
-]
-
-fluid_params = [
-    "Viscosity μ (cp)",
-    "Formation Volume Factor Bo"
-]
-
-well_params = [
-    "Pressure Drawdown ΔP (psi)",
-    "Well Radius rw (ft)"
-]
 st.header("🧾 Input Summary", divider=True)
 
 # Define parameter groups
@@ -155,7 +134,7 @@ def format_param_summary(label, default):
             f"{label}_umax", 
             default[2] if isinstance(default, tuple) else default * 1.5
         )
-        return f"**{label}**\nUniform = `{min_val}` – `{max_val}`"
+        return f"**{label, }**\nUniform = `{min_val}` – `{max_val}`"
 
     return f"**{label}**\n[Unknown Input Type]"
 
@@ -190,8 +169,6 @@ param_samples = {
 }
 
 
-
-
 def safe_kde_plot(q_results, p10, p50, p90, title="PDF of Flow Rate"):
     import matplotlib.pyplot as plt
     from scipy.stats import gaussian_kde
@@ -212,7 +189,7 @@ def safe_kde_plot(q_results, p10, p50, p90, title="PDF of Flow Rate"):
         y_val = kde.evaluate([val])[0]
         ax.vlines(val, 0, y_val, color=color, linestyle='--')
         ax.scatter(val, y_val, color=color, s=40, zorder=5)
-        ax.text(val + 0.02 * max(q_results), y_val - 0.01 * max(pdf),
+        ax.text(val + 0.02 * max(q_results), y_val + 0.01 * max(pdf),
                 f"{label}\n({val:.1f})", color=color, fontsize=8, fontweight='bold')
 
     ax.set_xlabel("Flow Rate (stb/day)")
