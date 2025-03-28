@@ -71,7 +71,7 @@ st.title("OOIP Monte Carlo Simulator (Anchored)")
 
 st.sidebar.header("Simulation Controls")
 n_sim = st.sidebar.slider("Number of Simulations", 100, 150000, 1000, step=100)
-base_weight = st.sidebar.slider("Base Distribution Weight", 0.0000001, 0.999999, 0.7)
+base_weight = st.sidebar.slider("Base Distribution Weight", 0.0000001, 0.999999, 0.99)
 
 # ----- Base Distribution Parameters -----
 st.sidebar.markdown("### 📊 Base Distribution Parameters")
