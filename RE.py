@@ -259,8 +259,7 @@ if run_sim:
     p50 = np.percentile(q_results, 50)
     p10 = np.percentile(q_results, 90)
     mean = np.mean(q_results)
-    min = np.percentile(q_results, .01)
-
+   
     st.markdown(
         "<hr style='border: 2px solid lightgray; margin-top: 20px; margin-bottom: 20px;'>",
         unsafe_allow_html=True
