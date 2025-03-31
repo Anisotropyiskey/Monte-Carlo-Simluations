@@ -18,7 +18,7 @@ def plot_pdf_with_annotations(ooip_mmstb, p90, p50, p10):
 
     sns.histplot(ooip_mmstb, bins=100, kde=True, stat="density", ax=ax, color="skyblue", edgecolor="white")
 
-    ax.vlines(p90, 0, .1, color='red', linestyle='--')
+    ax.vlines(p90, 0, pdf_p90, color='red', linestyle='--')
     ax.vlines(p50, 0, pdf_p50, color='green', linestyle='--')
     ax.vlines(p10, 0, pdf_p10, color='orange', linestyle='--')
 
