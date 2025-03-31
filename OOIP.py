@@ -79,7 +79,7 @@ st.sidebar.markdown("### 📊 Base Distribution Parameters")
 with st.sidebar.expander("📐 Area (acres)"):
     a_min = st.slider("Min", 100, 3000, 700, step=10, key="a_min")
     a_mode = st.slider("Mode", 100, 3000, 1000, step=10, key="a_mode")
-    a_max = st.slider("Max", 100, 3000, 1500, step=10, key="a_max")
+    a_max = st.slider("Max", 100, 5000, 1500, step=10, key="a_max")
 
 with st.sidebar.expander("📏 Net Pay (ft)"):
     h_min = st.slider("Min", 10, 200, 93, key="h_min")
