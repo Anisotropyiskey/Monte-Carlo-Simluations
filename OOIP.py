@@ -14,9 +14,14 @@ def plot_pdf_with_annotations(ooip_mmstb, p90, p50, p10):
 
     x_min, x_max = min(ooip_mmstb), max(ooip_mmstb)
     kde = gaussian_kde(ooip_mmstb, bw_method=0.25)
-    pdf_p90, pdf_p50, pdf_p10 = kde(p90), kde(p50), kde(p10)
+    pdf_p90 = kde(p90)[0]
+    pdf_p50 = kde(p50)[0]
+    pdf_p10 = kde(p10)[0]
 
-    sns.histplot(ooip_mmstb, bins=100, kde=True, stat="density", ax=ax, color="skyblue", edgecolor="white")
+    sns.histplot(ooip_mmstb, bins=100, kde=False, stat="density", ax=ax, color="skyblue", edgecolor="white")
+
+    x_vals = np.linspace(x_min, x_max, 1000)
+    ax.plot(x_vals, kde(x_vals), color='darkblue', lw=2, label="KDE")
 
     ax.vlines(p90, 0, pdf_p90, color='red', linestyle='--')
     ax.vlines(p50, 0, pdf_p50, color='green', linestyle='--')
@@ -26,9 +31,9 @@ def plot_pdf_with_annotations(ooip_mmstb, p90, p50, p10):
     ax.scatter(p50, pdf_p50, color='green', s=40, zorder=5)
     ax.scatter(p10, pdf_p10, color='orange', s=40, zorder=5)
 
-    ax.text(p90 + 2, pdf_p90 + 0.001, f'P90\n({p90:.1f})', fontsize=8, fontweight='bold')
-    ax.text(p50 + 2, pdf_p50 + 0.001, f'P50\n({p50:.1f})', fontsize=8, fontweight='bold')
-    ax.text(p10 + 2, pdf_p10 + 0.001, f'P10\n({p10:.1f})', fontsize=8, fontweight='bold')
+    ax.text(p90 + 5, pdf_p90 - 0.00, f'P90\n({p90:.1f})', fontsize=8, fontweight='bold')
+    ax.text(p50 + 5, pdf_p50 - 0.00, f'P50\n({p50:.1f})', fontsize=8, fontweight='bold')
+    ax.text(p10 + 5, pdf_p10 - 0.00, f'P10\n({p10:.1f})', fontsize=8, fontweight='bold')
 
     ax.set_title("Probability Distribution of OOIP", fontsize=11, fontweight='bold')
     ax.set_xlabel("OOIP (MMSTB)", fontsize=10)
@@ -71,7 +76,7 @@ st.title("OOIP Monte Carlo Simulator (Anchored)")
 
 st.sidebar.header("Simulation Controls")
 n_sim = st.sidebar.slider("Number of Simulations", 100, 150000, 1000, step=100)
-base_weight = st.sidebar.slider("Base Distribution Weight", 0.0000001, 0.999999, 0.99)
+base_weight = st.sidebar.slider("Base Distribution Weight", 0.0000001, 0.99999999, 0.7)
 
 # ----- Base Distribution Parameters -----
 st.sidebar.markdown("### 📊 Base Distribution Parameters")
@@ -79,7 +84,7 @@ st.sidebar.markdown("### 📊 Base Distribution Parameters")
 with st.sidebar.expander("📐 Area (acres)"):
     a_min = st.slider("Min", 100, 3000, 700, step=10, key="a_min")
     a_mode = st.slider("Mode", 100, 3000, 1000, step=10, key="a_mode")
-    a_max = st.slider("Max", 100, 5000, 1500, step=10, key="a_max")
+    a_max = st.slider("Max", 100, 3000, 1500, step=10, key="a_max")
 
 with st.sidebar.expander("📏 Net Pay (ft)"):
     h_min = st.slider("Min", 10, 200, 93, key="h_min")
@@ -241,7 +246,6 @@ def run_simulation(
             jitter(bo_tri_low, bo_tri_mode, bo_tri_high, n_each)
         ])
 
-
     elif jitter_type == "Normal":
         def jitter(mean, std, size):
             return np.random.normal(mean, std, size)
@@ -272,6 +276,8 @@ def run_simulation(
         bo_anchor = np.concatenate([
             jitter(1.30), jitter(1.25), jitter(1.20)])
 
+
+
     else:
         raise ValueError(f"Unsupported jitter type: {jitter_type}")
 
@@ -294,6 +300,8 @@ def run_simulation(
     nrv_p50 = np.percentile(nrv_acreft, 50)
     nrv_p10 = np.percentile(nrv_acreft, 90)
     nrv_mean = np.mean(nrv_acreft)
+    nrv_min = np.min(nrv_acreft)
+    nrv_max = np.max(nrv_acreft)
 
     inputs = {'Area': area, 'Net Pay': h, 'Porosity': phi, 'Sw': sw, 'Bo': bo}
     correlations = {k: spearmanr(v, ooip)[0] for k, v in inputs.items()}
@@ -335,6 +343,8 @@ def run_simulation(
         'nrv_p50': nrv_p50,
         'nrv_p90': nrv_p90,
         'nrv_mean': nrv_mean,
+        'nrv_min': nrv_min,
+        'nrv_max': nrv_max,
         'nrv_array': nrv_acreft  # Optional: for export or charting
 
     }
@@ -361,11 +371,12 @@ if st.button("Run Simulation"):
 
     st.subheader("🪨 Net Rock Volume (NRV)")
 
-    col_n1, col_n2, col_n3, col_n4 = st.columns(4)
-    col_n1.metric("NRV P90", f"{results['nrv_p90']:.0f} acre-ft")
-    col_n2.metric("NRV P50", f"{results['nrv_p50']:.0f} acre-ft")
-    col_n3.metric("NRV P10", f"{results['nrv_p10']:.0f} acre-ft")
-    col_n4.metric("NRV Mean", f"{results['nrv_mean']:.0f} acre-ft")
+    col_n1, col_n2, col_n3, col_n4, col_n5 = st.columns(5)
+    col_n1.metric("NRV min", f"{results['nrv_min']:.0f} acre-ft")
+    col_n2.metric("NRV P90", f"{results['nrv_p90']:.0f} acre-ft")
+    col_n3.metric("NRV P50", f"{results['nrv_p50']:.0f} acre-ft")
+    col_n4.metric("NRV P10", f"{results['nrv_p10']:.0f} acre-ft")
+    col_n5.metric("NRV max", f"{results['nrv_max']:.0f} acre-ft")
 
 if 'results' in locals():
     st.subheader("Distributions & Sensitivity")
