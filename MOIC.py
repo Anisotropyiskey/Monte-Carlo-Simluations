@@ -22,7 +22,7 @@ barrels = barrels_mmbbl * 1_000_000
 
 royalty_interest_loss = st.number_input("📉 Revenue Loss from Royalty & Interest (%)", min_value=0.0, max_value=100.0, value=35.0, step=5.0)
 
-price = st.number_input("💵 Flat Oil Price ($/bbl)", min_value=0.0, value=70.0, step=1.0, format="%.2f")
+price = st.number_input("💵 Flat Oil Price ($/bbl)", min_value=0.0, value=70.0, step=5.0, format="%.2f")
 
 capital = st.number_input("🏗️ Capital Invested ($MM)", min_value=0.0, value=300.0, step=10.0, format="%.2f")
 
