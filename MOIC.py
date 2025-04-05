@@ -24,7 +24,7 @@ royalty_interest_loss = st.number_input("📉 Revenue Loss from Royalty & Intere
 
 price = st.number_input("💵 Flat Oil Price ($/bbl)", min_value=0.0, value=70.0, step=1.0, format="%.2f")
 
-capital = st.number_input("🏗️ Capital Invested ($MM)", min_value=0.01, value=30.0, step=0.5, format="%.2f")
+capital = st.number_input("🏗️ Capital Invested ($MM)", min_value=0.0, value=300.0, step=10.0, format="%.2f")
 
 # --- Calculate MOIC ---
 st.header("📈 MOIC Result")
