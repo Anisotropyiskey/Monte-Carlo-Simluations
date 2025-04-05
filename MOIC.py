@@ -13,7 +13,7 @@ barrels_mmbbl = st.number_input(
     "🛢️ Recoverable Volume (MMbbl)", 
     min_value=0.0, 
     value=20.0, 
-    step=1.0, 
+    step=5.0, 
     format="%.2f"
 )
 
