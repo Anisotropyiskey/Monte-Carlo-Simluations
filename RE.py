@@ -10,7 +10,7 @@ st.set_page_config(layout="wide")
 
 # ----------------------------
 # 1. Sidebar Parameter Input (Consolidated)
-# ----------------------------
+# ---------------------------
 
 st.sidebar.title("🛠️ Flow Rate Input Parameters")
 
@@ -104,7 +104,7 @@ def format_param_summary(label, default):
     dist_type = st.session_state.get(f"{label}_type", "Fixed value")
 
     # Helper to style blocks
-    def styled_block(title, value, font="arial", size="16px", weight="normal", color="green", title_color="#dfe9e2"):
+    def styled_block(title, value, font="arial", size="16px", weight="normal", color="green", title_color="#808080"):
         return f"""
         <div style='margin-bottom: 15px;'>
             <div style='font-family: {font};font-weight: bold; font-size: 16px; color: {title_color};'>{title}</div>
